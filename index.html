@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+    <body>
+        <script>
+            let scene = new THREE.Scene();
+            let renderer = new THREE.WebGLRenderer();
+            
+            let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            let camera_pivot = new THREE.Object3D();
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            let loader = new THREE.CubeTextureLoader();
+            let texture = loader.load(['images/panorama_1.png', 'images/panorama_3.png', 'images/panorama_4.png', 'images/panorama_5.png', 'images/panorama_0.png', 'images/panorama_2.png']);
+            scene.background = texture;
+            
+            scene.add(camera_pivot);
+            camera_pivot.add(camera);
+            camera.position.set(0, 0, 0.1);
+            camera.rotation.x = -0.15 // Closest I could get it to actual Minecraft :p
+
+            function animate() {
+                requestAnimationFrame(animate);
+                camera_pivot.rotation.y -= 0.0008; // Slap this number higher for more speeeed
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            });
+        </script>
+    </body>
+</html>

@@ -8,10 +8,32 @@
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
+
+        #controls {
+            position: fixed;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 0 10px 10px 10px;
+            color: rgba(50, 50, 50);
+        }
     </style>
 </head>
     <body>
+        <div id="controls">
+            <h2 style="text-align: center">Controls:</h2>
+            
+            <label for="pos" style="display: inline-block"><b>Camera:</b></label>
+            <input style="vertical-align: middle" type="range" min="0" max="360" id="pos" />
+            <br/>
+            <label for="pos" style="display: inline-block"><b>Auto rotate:</b></label>
+            <input style="vertical-align: middle" type="checkbox" id="autorotate" name="autorotate" checked />
+        </div>
         <script>
+            const inputPos = document.querySelector('input[id="pos"]');
+            const inputRotate = document.querySelector('input[id="autorotate"]');
+
             let scene = new THREE.Scene();
             let renderer = new THREE.WebGLRenderer();
             let clock = new THREE.Clock();
@@ -33,7 +55,8 @@
 
             function animate() {
                 requestAnimationFrame(animate);
-                camera_pivot.rotation.y -= 0.05 * clock.getDelta(); // Slap this number higher for more speeeed
+                delta = clock.getDelta();
+                if (inputRotate.checked){ camera_pivot.rotation.y -= 0.05 * delta; } // Slap this number higher for more speeeed
                 renderer.render(scene, camera);
             }
             animate();
@@ -43,6 +66,8 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
             });
+
+            inputPos.addEventListener('input', () => { camera_pivot.rotation.y = -(inputPos.value * Math.PI / 180) });
         </script>
     </body>
 </html>
